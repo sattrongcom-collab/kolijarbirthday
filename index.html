@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday ❤️</title>
+
+<!-- CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0; overflow:hidden;
+  background:#0c0a09;
+  color:#e5e7eb;
+  font-family:Satoshi,sans-serif;
+}
+
+/* Aurora background */
+.aurora{
+  position:fixed; inset:0;
+  background:
+    radial-gradient(circle at 20% 30%, hsla(333,70%,55%,.4), transparent 40%),
+    radial-gradient(circle at 80% 20%, hsla(282,82%,54%,.3), transparent 40%),
+    radial-gradient(circle at 50% 80%, hsla(210,89%,60%,.3), transparent 45%),
+    radial-gradient(circle at 70% 60%, hsla(35,90%,60%,.3), transparent 40%);
+  animation: aurora 20s infinite alternate;
+}
+@keyframes aurora{
+  0%{filter:blur(40px);}
+  100%{filter:blur(60px);}
+}
+
+canvas{position:fixed; inset:0; z-index:1;}
+
+main{position:relative; z-index:2; width:100%; height:100vh; display:flex; justify-content:center; align-items:center;}
+
+/* Cards 6.5x3.5 inch, perfectly middle */
+.step{
+  position:absolute;
+  width:650px;
+  max-width:90%;
+  height:350px;
+  max-height:90%;
+  padding:2rem;
+  border-radius:24px;
+  backdrop-filter:blur(20px);
+  background: rgba(15,15,15,0.55);
+  border:1px solid rgba(255,255,255,0.15);
+  box-shadow:0 30px 60px rgba(0,0,0,0.6);
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+
+  pointer-events:none;
+  opacity:0;
+  
+  /* Centering fix */
+  top:50%;
+  left:50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  transition: transform 0.6s, opacity 0.6s;
+}
+.step.active{
+  opacity:1;
+  pointer-events:auto;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Typography */
+h1,h2{
+  font-family:"Playfair Display",serif;
+  background:linear-gradient(90deg,#f9a8d4,#fff,#fbcfe8);
+  -webkit-background-clip:text;
+  color:transparent;
+}
+p{margin-top:1rem; color:#e2e8f0;}
+
+/* Buttons */
+.btn{
+  background:linear-gradient(135deg,#fb7185,#f43f5e);
+  padding:.75rem 2rem;
+  border-radius:999px;
+  color:white;
+  font-weight:700;
+  box-shadow:0 0 20px rgba(244,63,94,.6);
+  transition:.3s;
+  margin-top:1.5rem;
+}
+.btn:hover{transform:translateY(-4px) scale(1.05);}
+.btn:active{transform:scale(.95);}
+
+/* Pulse heart */
+.pulse{animation:pulse 2s infinite;}
+@keyframes pulse{50%{transform:scale(1.15);}}
+
+/* Progress Bar */
+.progress{
+  position:fixed; top:20px; left:50%;
+  transform:translateX(-50%);
+  width:200px; height:6px;
+  background:rgba(255,255,255,.2);
+  border-radius:999px;
+}
+.progress span{
+  display:block; height:100%;
+  width:0%;
+  background:linear-gradient(90deg,#fb7185,#f43f5e);
+  border-radius:999px;
+}
+
+/* Bento Grid */
+.bento{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap:1rem;
+  margin-top:1rem;
+  width:100%;
+}
+.bento .card{
+  background:rgba(255,255,255,0.05);
+  padding:1rem;
+  border-radius:16px;
+}
+.bento .large{grid-column: span 2;}
+@media (max-width:480px){
+  .bento{grid-template-columns:1fr;}
+  .bento .large{grid-column:span 1;}
+}
+</style>
+</head>
+<body>
+<div class="aurora"></div>
+<canvas id="hearts"></canvas>
+
+<div class="progress"><span id="bar"></span></div>
+<main>
+  <div id="steps">
+
+    <!-- Step 1 -->
+    <div class="step active">
+      <div class="text-6xl pulse">❤️</div>
+      <h1 class="text-3xl mt-4">Hey Amar Kolijah,</h1>
+      <p>Ey moment ta shudu tmer jonno jan.</p>
+      <button class="btn" onclick="next()">Click Me</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step">
+      <div class="text-6xl">🎉</div>
+      <h1 class="text-3xl mt-4">Happy Birthday Amar Kolijah!</h1>
+      <p>Pritibite Aro ekti ujjol din. Ami Ey diner Sakkih hote pere onek vaggohban.</p>
+      <button class="btn" onclick="next()">There's more...</button>
+    </div>
+
+    <!-- Step 3: Bento Grid -->
+    <div class="step">
+      <h2 class="text-2xl">A Few Things I Adore About You</h2>
+      <div class="bento">
+        <div class="card large">
+          <strong>✨ My dream with you</strong>
+          <p>Jan tmk ami sarajiboner jonno cai. Tmer sate sarata jibon katate cai, amar hoie teke jeo jemney hoq. Kkno cere jeo na plz</p>
+        </div>
+        <div class="card">
+          <strong>😊 Your Smile</strong>
+          <p>Tmer hasi ta onk shundor. Sob Somoy hasi kusi takio jan. Ey tai j amar valo takar karon.</p>
+        </div>
+        <div class="card large">
+          <strong>🌟 Your Radiant Eye</strong>
+          <p>Jan tmer cohq ta J koto shundhor..Ma sha Allah. Tmer ey choq amar mon churi kore nieyese. Tmer choq er dike takaley amar monta tanda hoie jai. Tmer ey choq dhuto amar vishon prio.</p>
+        </div>
+      </div>
+      <button class="btn" onclick="next()">Remember this?</button>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step">
+      <h2 class="text-2xl">That One Time...</h2>
+      <p>Tmer sate protita din amar kace ek ek ta natun adventure. Tmi amar jibon k rangiye diye anondo ene dao...</p>
+      <button class="btn" onclick="next()">One last thing...</button>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step">
+      <div class="text-6xl">🎂</div>
+      <h1 class="text-3xl mt-4">My Wish For You</h1>
+      <p>Happy Birthday amar Jan. Always smile korio jan.</p>
+      <button class="btn" onclick="celebrate()">Celebrate!</button>
+      <div id="final" class="opacity-0 mt-6 text-3xl font-playfair">
+        Happy Birthday, amar Kolijah! ❤️
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+let currentStep = 0;
+const steps = document.querySelectorAll('.step');
+const bar = document.getElementById('bar');
+
+function next(){
+  const prev = steps[currentStep];
+  gsap.to(prev,{opacity:0, y:-30, scale:0.95, duration:0.5, onComplete:()=>{
+    prev.classList.remove('active');
+    currentStep++;
+    const nextStep = steps[currentStep];
+    nextStep.classList.add('active');
+    gsap.fromTo(nextStep,{opacity:0, y:30, scale:0.95},{opacity:1, y:0, scale:1, duration:0.6});
+    bar.style.width = (currentStep/(steps.length-1))*100+"%";
+  }});
+}
+
+function celebrate(){
+  gsap.to("#final",{opacity:1,y:-10,duration:1});
+  const end=Date.now()+5000;
+  const interval=setInterval(()=>{
+    confetti({particleCount:60,spread:360,origin:{x:Math.random(),y:.6}});
+    if(Date.now()>end) clearInterval(interval);
+  },300);
+}
+
+/* Three.js floating crystal hearts */
+function createHeartShape(){
+  const shape = new THREE.Shape();
+  shape.moveTo(0,0);
+  shape.bezierCurveTo(0,0,-0.5,-0.5,-1,0);
+  shape.bezierCurveTo(-1.5,0.8,-0.2,1.5,0,1.8);
+  shape.bezierCurveTo(0.2,1.5,1.5,0.8,1,0);
+  shape.bezierCurveTo(0.5,-0.5,0,0,0,0);
+  return shape;
+}
+
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.1,100);
+camera.position.z=8;
+const renderer=new THREE.WebGLRenderer({canvas:document.getElementById("hearts"),alpha:true});
+renderer.setSize(innerWidth,innerHeight);
+scene.add(new THREE.AmbientLight(0xffffff,1));
+
+const hearts=[];
+for(let j=0;j<25;j++){
+  const geom=new THREE.ShapeGeometry(createHeartShape());
+  const mat=new THREE.MeshStandardMaterial({
+    color: Math.random()>0.5?0xffd6e8:0xffffff,
+    metalness:0.7,
+    roughness:0.1,
+    transparent:true,
+    opacity:0.9
+  });
+  const h=new THREE.Mesh(geom,mat);
+  h.position.set((Math.random()-0.5)*10,(Math.random()-0.5)*10,(Math.random()-0.5)*10);
+  h.scale.setScalar(Math.random()*0.25+0.1);
+  scene.add(h); hearts.push(h);
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  hearts.forEach((h,i)=>{
+    h.rotation.y+=0.01; h.rotation.x+=0.005;
+    h.position.y+=Math.sin(Date.now()/1000+i*0.5)*0.003;
+    h.position.x+=Math.sin(Date.now()/900+i)*0.002;
+  });
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener("resize",()=>{
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+});
+</script>
+</body>
+</html>
